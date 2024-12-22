@@ -1,0 +1,27 @@
+.likes {
+    position: absolute;
+    bottom: 5px;
+    left: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgb(45, 17, 17);
+    border-radius: 8px;
+    padding: 5px;
+    background-color: #fff;
+}
+
+.author {
+    position: absolute;
+    bottom: 5px;
+    left: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgb(45, 17, 17);
+    border-radius: 8px;
+    padding: 5px;
+    background-color: #fff;
+}

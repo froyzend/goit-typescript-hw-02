@@ -1,0 +1,12 @@
+.image {
+    object-fit: cover;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 400px;
+    height: 257px;
+    transition: transform 1.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+    &:hover {
+        transform: scale(105%);
+    }
+}
