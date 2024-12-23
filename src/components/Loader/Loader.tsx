@@ -1,17 +1,20 @@
 import { ThreeDots } from "react-loader-spinner";
 
-const Loader = () => {
+interface LoaderProps {
+  color?: string;
+}
+
+const Loader: React.FC<LoaderProps> = ({ color = "#4fa94d" }) => {
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <ThreeDots
         visible={true}
         height="80"
         width="80"
-        color="#4fa94d"
+        color={color}
         radius="9"
         ariaLabel="three-dots-loading"
-        wrapperStyle={{}}
-        wrapperClass=""
+        wrapperStyle={{ marginTop: "20px" }}
       />
     </div>
   );

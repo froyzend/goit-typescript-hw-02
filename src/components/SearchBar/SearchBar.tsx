@@ -1,6 +1,10 @@
 import css from "./SearchBar.module.css";
 
-const SearchBar = ({ sendQuery }) => {
+interface SearchBarProps {
+  sendQuery: (e: React.FormEvent<HTMLFormElement>) => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ sendQuery }) => {
   return (
     <>
       <header className={css.SearchBarHeader}>

@@ -1,5 +1,10 @@
 import css from "./ImageCard.module.css";
-const ImageCard = ({ gallerySize, descr }) => {
+interface ImageCardProps {
+  gallerySize: string;
+  descr: string;
+}
+
+const ImageCard: React.FC<ImageCardProps> = ({ gallerySize, descr }) => {
   return (
     <div>
       <img className={css.image} src={gallerySize} alt={descr} loading="lazy" />

@@ -1,29 +1,37 @@
 import "./App.css";
-import { fetchImages } from "./Image-api";
-import SearchBar from "./components/SearchBar/SearchBar";
-import ImageGallery from "./components/ImageGallery/ImageGallery";
+import { fetchImages } from "../../server/Image-api";
+import SearchBar from "../SearchBar/SearchBar";
+import ImageGallery from "../ImageGallery/ImageGallery";
 import { useEffect, useState } from "react";
-import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
-import Loader from "./components/Loader/Loader";
-import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
+import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
+import Loader from "../Loader/Loader";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import toast, { Toaster } from "react-hot-toast";
-import ImageModal from "./components/ImageModal/ImageModal";
+import ImageModal from "../ImageModal/ImageModal";
+import { ImageType } from "../../types/common.types";
 
-const App = () => {
-  const [images, setImages] = useState([]);
-  const [query, setQuery] = useState();
-  const [page, setPage] = useState(1);
-  const [totalImages, setTotalImages] = useState(0);
-  const [visibleBtn, setVisibleBtn] = useState(false);
-  const [loader, setLoader] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(false);
-  const [modalImage, setModalImage] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+const App: React.FC = () => {
+  const [images, setImages] = useState<ImageType[]>([]);
+  const [query, setQuery] = useState<string | undefined>(undefined);
+  const [page, setPage] = useState<number>(1);
+  const [totalImages, setTotalImages] = useState<number>(0);
+  const [visibleBtn, setVisibleBtn] = useState<boolean>(false);
+  const [loader, setLoader] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<boolean>(false);
+  const [modalImage, setModalImage] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<ImageType | null>(null);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
-    const searchQuery = e.target.elements.searchInput.value.trim();
-    if (searchQuery === "") {
+
+    const form = e.target as HTMLFormElement;
+    const searchInput = form.elements.namedItem(
+      "searchInput"
+    ) as HTMLInputElement;
+
+    if (!searchInput || searchInput.value.trim() === "") {
       toast.error("Please enter your keyword to search field...", {
         style: {
           background: "red",
@@ -33,16 +41,21 @@ const App = () => {
       });
       return;
     }
+
+    const searchQuery = searchInput.value.trim();
     setQuery(searchQuery);
     setPage(1);
+
     try {
       setErrorMessage(false);
       setLoader(true);
+
       const { results, total } = await fetchImages(searchQuery, 1);
       setImages(results);
       setTotalImages(total);
       setVisibleBtn(results.length > 0 && results.length < total);
-      e.target.reset();
+
+      form.reset();
     } catch (error) {
       console.error(error);
       setVisibleBtn(false);
@@ -52,16 +65,14 @@ const App = () => {
     }
   };
 
-  const loadMoreImg = async () => {
+  const loadMoreImg = async (): Promise<void> => {
     try {
       setErrorMessage(false);
       setLoader(true);
       const nextPage = page + 1;
       setPage(nextPage);
-      const { results: newImages } = await fetchImages(query, nextPage);
-
+      const { results: newImages } = await fetchImages(query!, nextPage);
       setImages((prevImages) => [...prevImages, ...newImages]);
-
       const allLoaded = images.length + newImages.length >= totalImages;
       setVisibleBtn(!allLoaded);
     } catch (error) {
@@ -73,9 +84,14 @@ const App = () => {
     }
   };
 
-  const modalOpen = (id) => {
+  const modalOpen = (id: string): void => {
     const findImage = images.find((image) => image.id === id);
-    setSelectedImage(findImage);
+    setSelectedImage(findImage || null);
+  };
+
+  const modalClose = (): void => {
+    setModalImage(false);
+    setSelectedImage(null);
   };
 
   useEffect(() => {
@@ -84,13 +100,8 @@ const App = () => {
     }
   }, [selectedImage]);
 
-  const modalClose = () => {
-    setModalImage(false);
-    setSelectedImage(null);
-  };
-
   useEffect(() => {
-    const handleCloseModal = (e) => {
+    const handleCloseModal = (e: KeyboardEvent): void => {
       if (e.key === "Escape") {
         modalClose();
       }
@@ -123,6 +134,7 @@ const App = () => {
       overflow: "hidden",
     },
   };
+
   return (
     <>
       <Toaster
